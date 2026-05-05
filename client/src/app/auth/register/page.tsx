@@ -14,6 +14,7 @@ export default function RegisterPage() {
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
+        mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
@@ -23,7 +24,12 @@ export default function RegisterPage() {
       setSuccess(true);
       setTimeout(() => router.push("/auth/login"), 2000);
     } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
+      if (err instanceof Error) {
+        const message = err.message.includes('Failed to fetch')
+          ? 'Unable to reach the auth server. Make sure the backend is running.'
+          : err.message;
+        setError(message);
+      }
     }
   };
 

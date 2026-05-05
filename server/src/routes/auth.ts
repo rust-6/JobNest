@@ -28,7 +28,12 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     
     res.status(201).json({ message: 'User created successfully' });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    let message = error.message;
+    if (error.code === 11000) {
+      const duplicateField = Object.keys(error.keyValue || {}).join(', ');
+      message = duplicateField ? `${duplicateField} already exists` : 'Username or email already exists';
+    }
+    res.status(400).json({ message });
   }
 });
 

@@ -25,6 +25,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "plugins": [
       {
         "name": "next"
@@ -34,8 +38,10 @@
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "src/app/**/*",
+    "src/pages/**/*",
+    "src/components/**/*",
+    "src/lib/**/*"
   ],
   "exclude": [
     "node_modules"

@@ -1,13 +1,12 @@
 {
   "name": "client",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "lint": "next lint"
-  },
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview",
+    "test":"echo \"Error:no test specified\" && exit 1",
+    },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "class-variance-authority": "^0.7.1",

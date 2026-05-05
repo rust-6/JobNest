@@ -89,6 +89,119 @@ export default function Home() {
              </div>
            </div>
         </div>
+
+        {/* Features Section */}
+        <div id="features" className="w-full mt-32 pt-20 border-t border-zinc-800">
+          <h2 className="text-4xl font-extrabold text-white mb-16 text-center">Why Choose JobNest?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+            <div className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all">
+              <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
+                <span className="text-2xl">📊</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Track Everything</h3>
+              <p className="text-zinc-400">Keep track of all your job applications in one place with detailed application history and status updates.</p>
+            </div>
+            <div className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all">
+              <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
+                <span className="text-2xl">⏰</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Smart Reminders</h3>
+              <p className="text-zinc-400">Never miss a follow-up deadline. Get timely reminders for your job applications and referrals.</p>
+            </div>
+            <div className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all">
+              <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-4">
+                <span className="text-2xl">📈</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Analytics Hub</h3>
+              <p className="text-zinc-400">Visualize your job search progress with intuitive charts and actionable insights.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* How it works Section */}
+        <div id="how-it-works" className="w-full pt-20 border-t border-zinc-800">
+          <h2 className="text-4xl font-extrabold text-white mb-16 text-center">How It Works</h2>
+          <div className="space-y-8 max-w-3xl mx-auto mb-32">
+            <div className="flex gap-8 items-start">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-purple-500/30 border border-purple-500/50 flex items-center justify-center text-purple-300 font-bold text-lg">1</div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Sign Up & Create Profile</h3>
+                <p className="text-zinc-400">Create your account and set up your profile in minutes.</p>
+              </div>
+            </div>
+            <div className="flex gap-8 items-start">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-blue-500/30 border border-blue-500/50 flex items-center justify-center text-blue-300 font-bold text-lg">2</div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Log Your Applications</h3>
+                <p className="text-zinc-400">Add job applications with company details, positions, and status.</p>
+              </div>
+            </div>
+            <div className="flex gap-8 items-start">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/30 border border-emerald-500/50 flex items-center justify-center text-emerald-300 font-bold text-lg">3</div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Set Reminders & Track Progress</h3>
+                <p className="text-zinc-400">Get reminders for follow-ups and track your application status in real-time.</p>
+              </div>
+            </div>
+            <div className="flex gap-8 items-start">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-orange-500/30 border border-orange-500/50 flex items-center justify-center text-orange-300 font-bold text-lg">4</div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">Analyze & Optimize</h3>
+                <p className="text-zinc-400">View analytics to understand your job search patterns and success rates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div id="faq" className="w-full pt-20 border-t border-zinc-800 pb-32">
+          <h2 className="text-4xl font-extrabold text-white mb-16 text-center">Frequently Asked Questions</h2>
+          <div className="max-w-2xl mx-auto space-y-4">
+            <details className="group p-6 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all cursor-pointer">
+              <summary className="flex items-center justify-between font-semibold text-white hover:text-purple-400 transition-colors">
+                <span>Is JobNest free to use?</span>
+                <span className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400">Yes! JobNest is completely free to use. We believe everyone deserves tools to manage their job search effectively without barriers.</p>
+            </details>
+            <details className="group p-6 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all cursor-pointer">
+              <summary className="flex items-center justify-between font-semibold text-white hover:text-purple-400 transition-colors">
+                <span>Can I use JobNest on mobile?</span>
+                <span className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400">JobNest is built with responsive design, so you can access your dashboard from any mobile device, tablet, or desktop browser.</p>
+            </details>
+            <details className="group p-6 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all cursor-pointer">
+              <summary className="flex items-center justify-between font-semibold text-white hover:text-purple-400 transition-colors">
+                <span>How secure is my data?</span>
+                <span className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400">Your data is encrypted and securely stored. We take privacy seriously and never share your information with third parties.</p>
+            </details>
+            <details className="group p-6 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all cursor-pointer">
+              <summary className="flex items-center justify-between font-semibold text-white hover:text-purple-400 transition-colors">
+                <span>Can I import data from other tools?</span>
+                <span className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400">Currently, we support manual entry. We&apos;re working on import features from popular spreadsheet tools and job tracking platforms.</p>
+            </details>
+            <details className="group p-6 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-all cursor-pointer">
+              <summary className="flex items-center justify-between font-semibold text-white hover:text-purple-400 transition-colors">
+                <span>What if I need help or have feedback?</span>
+                <span className="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400">We&apos;d love to hear from you! Contact us through our support email or reach out through your dashboard for any questions or suggestions.</p>
+            </details>
+          </div>
+        </div>
       </main>
 
     </div>

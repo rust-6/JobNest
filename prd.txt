@@ -1,0 +1,506 @@
+JobNest
+Job Referral & Application Tracker
+Product Requirements Document  |  Version 1.0  |  June 2025
+1. Product Overview
+JobNest is a full-stack web application that centralises job referral tracking, application management, and career analytics in one clean interface. The product eliminates the spreadsheet chaos that students and early-career professionals face when managing multiple simultaneous job hunts.
+Product Name
+JobNest — Job Referral & Application Tracker
+Version
+1.0
+Status
+PRD — Ready for Engineering Kickoff
+Target Launch
+Q3 2025
+Owner
+Product & Engineering Team
+Stack
+Next.js 14 · Node.js/Express · MongoDB · Tailwind CSS
+2. Problem Statement
+Job seekers — particularly students and freshers — manage dozens of applications across multiple platforms simultaneously. Common pain points include:
+No single source of truth for referral status, follow-up deadlines, and interview schedules
+Missed follow-ups due to lack of reminders, directly reducing offer rates
+No analytics to understand personal success patterns (e.g. which companies convert best)
+Resume/cover letter versions scattered across email, Drive, and Downloads folders
+3. Target Users
+Persona
+Description
+Primary Need
+Final-Year Student
+Applying for 10–30 companies simultaneously
+Organised tracking + reminders
+Fresher / New Grad
+Using alumni/LinkedIn referrals for first job
+Referral status + follow-up nudges
+Lateral Job Seeker
+Developer or professional switching companies
+Analytics + document management
+Career Services Staff
+Counsellors monitoring student placement progress
+Aggregate analytics view
+4. Goals & Success Metrics
+4.1  Business Goals
+Reach 5,000 registered users within 6 months of launch
+Achieve 40 % weekly active user rate among registered users
+Attain NPS >= 45 within 90 days of launch
+4.2  Success Metrics (KPIs)
+Metric
+Target
+Measurement Method
+User Registration Rate
+500 signups / month
+Auth service logs
+Referral Entries / User
+>= 5 within first week
+DB aggregation
+Reminder Open Rate
+>= 60 %
+Email service analytics
+Retention (D-30)
+>= 35 %
+Cohort analysis
+Crash Rate
+< 0.5 %
+Error monitoring (Sentry)
+5. Scope
+5.1  In Scope (v1.0)
+Email/username authentication (JWT + refresh tokens)
+Dashboard with aggregated stats cards
+Full CRUD for job referral entries
+Status tracking with audit log / timeline
+Search, filter, and sort across all entries
+In-app + email reminders (follow-up nudges)
+Resume & cover-letter upload (Cloudinary)
+Personal analytics charts
+Mobile-responsive UI
+5.2  Out of Scope (v1.0 — future sprints)
+LinkedIn / job-board OAuth import
+Team / shared workspace (multi-user org view)
+AI-powered resume scoring
+Native mobile app (iOS / Android)
+Calendar sync (Google Calendar / Outlook)
+6. Feature Specifications
+6.1  Authentication
+Secure registration and login using email or username. No phone number required.
+Field / Rule
+Detail
+Registration fields
+Name, Email, Username (unique), Password (bcrypt, min 8 chars)
+Login options
+Email OR Username + password
+Token strategy
+JWT access token (15 min) + HTTP-only refresh token (7 days)
+Password reset
+Time-limited email link (token expires in 30 min)
+Rate limiting
+5 failed attempts → 15-min lockout (brute-force protection)
+Session management
+Logout invalidates refresh token; stored in Redis or DB blocklist
+6.2  Dashboard
+The landing page after login. Gives an at-a-glance summary of all job activity.
+Stat cards: Total Applications, Interviews Scheduled, Selected, Rejected, Pending
+Recent activity feed (last 5 status changes)
+Quick-add CTA button always visible
+Upcoming reminders widget (next 3 due)
+Streak indicator — consecutive days with activity
+6.3  Add / Edit Referral
+Field
+Type
+Required
+Notes
+Company Name
+Text
+Yes
+Autocomplete from past entries
+Job Role / Title
+Text
+Yes
+Free text
+Job URL
+URL
+No
+Link to JD for quick reference
+Referral Person
+Text
+No
+Name of referrer; empty if direct apply
+Date Applied
+Date
+Yes
+Defaults to today
+Status
+Enum
+Yes
+See status enum below
+Priority
+Enum
+No
+Low / Medium / High — for personal focus
+Notes
+Textarea
+No
+Free-form, supports markdown
+Resume Used
+File ref
+No
+Link to uploaded resume version
+Follow-up Date
+Date
+No
+Triggers reminder if set
+Status Enum (ordered lifecycle):
+Applied → Referred → Screening → Interview → Offer → Selected → Rejected → Ghosted
+Engineering note: Status stored as string enum; transitions are not enforced server-side in v1 (user can jump states), but the timeline records every change with a timestamp.
+6.4  Status Tracking & Timeline
+Every status change is appended to an immutable status_history array on the referral document
+Timeline view renders a vertical stepper with date, old status, new status, and optional note
+Ghosted status is auto-suggested if no update for 21 days (configurable per user)
+6.5  Search, Filter & Sort
+Capability
+Options
+Search
+Full-text across company name, role, referrer name, notes (MongoDB text index)
+Filter
+Status (multi-select), Company, Date range (applied), Priority, Has referrer
+Sort
+Date Applied (default desc), Company A-Z, Status, Priority
+Export
+Download filtered view as CSV
+6.6  Reminders & Notifications
+Users set a follow-up date per referral; a background job (cron) checks daily
+Notification channels: in-app notification bell + email (Nodemailer / SendGrid)
+Email digest option: daily or weekly summary of pending follow-ups
+Users can snooze a reminder by 3 / 7 / 14 days from the notification
+Implementation note: Use BullMQ (Redis-backed) for reliable job scheduling. Avoid cron-only approach to prevent missed runs on dyno restarts.
+6.7  Document Management
+Upload PDF or DOCX (max 5 MB per file, max 20 files per user in free tier)
+Storage: Cloudinary with folder scoped per userId
+Resume versions are labelled by user (e.g. 'SWE Resume v2') and reusable across entries
+Delete from Cloudinary is permanent; user prompted with confirmation dialog
+6.8  Analytics
+Total applications over time (line chart — weekly buckets)
+Status distribution (donut chart)
+Top companies applied to (bar chart)
+Conversion funnel: Applied → Interview → Offer → Selected
+Average time between stages (response time analytics)
+Charts built with Recharts. Data computed server-side and cached (5-min TTL) to avoid expensive aggregation on each page load.
+7. UI / UX Specifications
+7.1  Pages
+Route
+Page
+Description
+/
+Landing / Marketing
+Hero, feature list, CTA to sign up
+/auth/register
+Sign Up
+Name, email, username, password
+/auth/login
+Log In
+Email/username + password + forgot password link
+/dashboard
+Dashboard
+Stats, recent activity, reminders widget
+/referrals
+Job List
+Table/card view with search + filters
+/referrals/new
+Add Referral
+Form to create new entry
+/referrals/[id]
+Job Detail
+Full entry + timeline + edit inline
+/analytics
+Analytics
+Charts + funnel view
+/settings
+Settings
+Profile, notification prefs, account
+7.2  Design Principles
+Clean and minimal — inspired by Notion / Linear; no visual clutter
+Card-based layout for referral entries; table view toggle available
+Colour-coded status badges (e.g. green = Selected, red = Rejected, blue = Interview)
+Mobile-first responsive grid (single column < 768 px, two-column >= 1024 px)
+Dark mode support via Tailwind CSS dark: variant (user preference persisted)
+8. Technical Architecture
+8.1  Tech Stack
+Layer
+Technology
+Rationale
+Frontend
+Next.js 14 (App Router) + TypeScript
+SSR/ISR, file-based routing, type safety
+Styling
+Tailwind CSS + shadcn/ui
+Rapid UI, accessible components
+Backend
+Node.js + Express (REST API)
+Familiar, lightweight, great ecosystem
+Database
+MongoDB + Mongoose
+Flexible schema for evolving referral model
+Auth
+JWT (access) + HTTP-only cookie (refresh)
+Stateless, secure, scalable
+File Storage
+Cloudinary
+Managed CDN, transformation API
+Job Queue
+BullMQ + Redis
+Reliable async jobs for reminders
+Email
+Nodemailer + SendGrid
+Transactional email at scale
+Charts
+Recharts
+React-native, composable chart library
+Deployment
+Vercel (frontend) + Railway (API/DB)
+Zero-config CI/CD
+Monitoring
+Sentry + Axiom
+Error tracking + log management
+8.2  Revised Database Schema
+User
+Field
+Type
+Notes
+_id
+ObjectId
+Primary key
+name
+String
+Display name
+email
+String
+Unique, indexed, lowercase
+username
+String
+Unique, indexed, lowercase, 3–20 chars
+passwordHash
+String
+bcrypt hash
+refreshTokenHash
+String
+Hashed refresh token (not raw JWT)
+notifPrefs
+Object
+{ email: Boolean, inApp: Boolean, digestFreq: 'daily'|'weekly' }
+createdAt
+Date
+Auto
+updatedAt
+Date
+Auto
+JobReferral
+Field
+Type
+Notes
+_id
+ObjectId
+Primary key
+userId
+ObjectId ref
+Index; FK to User
+companyName
+String
+Indexed for autocomplete + filter
+role
+String
+Job title
+jobUrl
+String
+Optional JD link
+referralPerson
+String
+Optional; null = direct apply
+dateApplied
+Date
+Indexed for date-range filter
+status
+String enum
+Applied | Referred | Screening | Interview | Offer | Selected | Rejected | Ghosted
+priority
+String enum
+Low | Medium | High
+notes
+String
+Markdown-safe
+resumeLink
+String
+Cloudinary URL
+followUpDate
+Date
+Triggers reminder job
+reminderSnoozedTo
+Date
+Overrides followUpDate until this date
+statusHistory
+Array
+[{ status, changedAt, note }] — append-only
+createdAt
+Date
+Auto
+updatedAt
+Date
+Auto
+9. API Design
+9.1  Auth Endpoints
+Method
+Route
+Auth?
+Description
+POST
+/api/auth/register
+No
+Create account
+POST
+/api/auth/login
+No
+Return access + set refresh cookie
+POST
+/api/auth/refresh
+No
+Rotate refresh token, return new access token
+POST
+/api/auth/logout
+Yes
+Invalidate refresh token
+POST
+/api/auth/forgot-password
+No
+Send reset email
+POST
+/api/auth/reset-password
+No
+Consume reset token, update password
+9.2  Referral Endpoints
+Method
+Route
+Auth?
+Description
+GET
+/api/referrals
+Yes
+List all for authed user; supports ?status=&company=&from=&to=&sort=&q=
+POST
+/api/referrals
+Yes
+Create new referral
+GET
+/api/referrals/:id
+Yes
+Get single referral + full statusHistory
+PATCH
+/api/referrals/:id
+Yes
+Partial update (appends to statusHistory on status change)
+DELETE
+/api/referrals/:id
+Yes
+Soft-delete (isDeleted flag; purged after 30 days)
+GET
+/api/referrals/export
+Yes
+Download as CSV
+9.3  Analytics & Other
+Method
+Route
+Auth?
+Description
+GET
+/api/analytics/summary
+Yes
+Aggregated dashboard stats (cached 5 min)
+GET
+/api/analytics/funnel
+Yes
+Stage-conversion funnel data
+POST
+/api/upload/resume
+Yes
+Upload to Cloudinary; returns URL
+PATCH
+/api/users/me
+Yes
+Update profile + notification prefs
+10. Security Requirements
+All passwords hashed with bcrypt (cost factor 12)
+Refresh tokens stored as hash (SHA-256) in DB — raw token never persisted
+HTTP-only, Secure, SameSite=Strict cookies for refresh token
+CORS restricted to known frontend origin(s)
+Input validation with Zod on all endpoints; errors return 400 with structured messages
+File upload: validate MIME type server-side (not just extension); max 5 MB enforced
+Rate limiting: 100 req/min per IP globally; 5 req/min on auth routes
+OWASP Top 10 review before v1.0 release; automated scanning with npm audit CI gate
+11. Non-Functional Requirements
+Requirement
+Target
+API P95 Latency
+< 300 ms for list/detail endpoints
+API P99 Latency
+< 800 ms
+Uptime SLA
+>= 99.5 % monthly
+Time to Interactive
+< 2.5 s on 4G mobile (Lighthouse)
+Accessibility
+WCAG 2.1 AA compliance
+Browser Support
+Last 2 versions of Chrome, Firefox, Safari, Edge
+Mobile Support
+iOS 16+, Android 12+
+Data Retention
+Soft-deleted records purged after 30 days
+12. Milestones & Timeline
+Sprint
+Weeks
+Deliverable
+Sprint 1 — Foundation
+1–2
+Project scaffold, auth (register/login/JWT), user model, CI/CD pipeline
+Sprint 2 — Core CRUD
+3–4
+Referral CRUD API, status history, Dashboard UI, Job List page
+Sprint 3 — Features
+5–6
+Search/filter/export, reminders (BullMQ), file upload (Cloudinary)
+Sprint 4 — Analytics
+7–8
+Analytics API + Recharts UI, funnel view, performance optimisation
+Sprint 5 — Polish & QA
+9–10
+Dark mode, accessibility audit, security review, E2E tests (Playwright)
+Launch
+W11
+Production deploy, monitoring setup, beta user onboarding
+13. Risks & Mitigations
+Risk
+Impact
+Likelihood
+Mitigation
+Email deliverability issues
+High
+Medium
+Use SendGrid with SPF/DKIM; fallback in-app notifications
+Cloudinary cost overrun
+Medium
+Low
+Set free-tier file limits; monitor usage dashboards
+MongoDB query performance
+Medium
+Medium
+Compound indexes on userId+status+dateApplied; use explain()
+Scope creep in v1.0
+High
+High
+Strict out-of-scope list (Section 5.2); defer via backlog
+Low user retention
+High
+Medium
+Onboarding checklist + Day-7 email nudge campaign
+14. Open Questions
+Should the free tier have a referral entry cap (e.g. 50) to drive future monetisation?
+Do we build a public-facing marketing landing page in v1.0 or launch dark with invite-only?
+Should ghosted status be auto-applied or only suggested to the user?
+Is Redis self-hosted on Railway or managed (Upstash) — cost vs ops tradeoff to confirm?
+— End of Document —
